@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Épreuve 1 · Quelle juridiction pour quel litige ? — TMK Performances</title>
+<style>
+  :root{
+    --prune:#8C1E70; --prune-fonce:#5E1349; --rose:#C77BAA; --rose-clair:#F4E6EE;
+    --gris:#3C3C3C; --gris-moyen:#8A7A85; --vert:#1E7A4F; --rouge:#B3241F; --fond:#FAF6F8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+       background:var(--fond);color:var(--gris);line-height:1.4;padding:0 0 40px}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+  /* ---------- Bandeau ---------- */
+  header{background:var(--prune-fonce);color:#fff;padding:14px 0}
+  .head{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .head .marque{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--rose)}
+  .head h1{font-size:22px;font-weight:700;flex:1;min-width:280px}
+  .compteur{background:rgba(255,255,255,.14);padding:6px 14px;border-radius:20px;font-size:14px;white-space:nowrap}
+
+  /* ---------- Scores ---------- */
+  .scores{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0}
+  .score{flex:1;min-width:150px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);
+         border-radius:6px;padding:7px 12px;color:#fff}
+  .score .nom{font-size:12px;color:var(--rose);text-transform:uppercase;letter-spacing:1px;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .score .pts{font-size:20px;font-weight:700}
+
+  /* ---------- Accueil ---------- */
+  .panneau{background:#fff;border:1px solid var(--rose-clair);border-radius:8px;padding:28px;margin-top:24px}
+  .panneau h2{font-size:20px;color:var(--prune-fonce);margin-bottom:6px}
+  .panneau p.intro{color:var(--gris-moyen);font-size:15px;margin-bottom:20px}
+  .equipes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  .equipes label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:1px;
+                 color:var(--prune);margin-bottom:5px}
+  .equipes input{width:100%;padding:11px 12px;border:1.5px solid var(--rose);border-radius:5px;
+                 font-size:16px;font-family:inherit;color:var(--gris)}
+  .equipes input:focus{outline:none;border-color:var(--prune);box-shadow:0 0 0 3px var(--rose-clair)}
+  .regle{background:var(--rose-clair);border-left:4px solid var(--prune);padding:14px 18px;
+         font-size:14px;margin-bottom:22px}
+  .regle b{color:var(--prune-fonce)}
+
+  /* ---------- Boutons ---------- */
+  button{font-family:inherit;cursor:pointer;border:none}
+  .btn{background:var(--prune);color:#fff;padding:13px 26px;border-radius:5px;font-size:16px;
+       font-weight:600;letter-spacing:.3px}
+  .btn:hover{background:var(--prune-fonce)}
+  .btn:disabled{background:#D8CCD4;color:#fff;cursor:not-allowed}
+  .btn.secondaire{background:#fff;color:var(--prune);border:1.5px solid var(--rose)}
+  .btn.secondaire:hover{background:var(--rose-clair)}
+  .barre{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap}
+  .aide{font-size:13px;color:var(--gris-moyen)}
+
+  /* ---------- Question ---------- */
+  .enonce{background:#fff;border:1px solid var(--rose-clair);border-left:6px solid var(--prune);
+          border-radius:6px;padding:20px 24px;margin-top:22px;display:flex;gap:20px;align-items:baseline}
+  .enonce .num{font-size:34px;font-weight:700;color:var(--rose);line-height:1}
+  .enonce .txt{font-size:24px;font-weight:600;color:var(--prune-fonce)}
+
+  .etape{margin-top:22px}
+  .etape.masquee{display:none}
+  .etape h3{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--prune);
+            border-bottom:2px solid var(--rose);padding-bottom:5px;margin-bottom:12px}
+  .colonnes{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .col h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#fff;
+          background:var(--prune);padding:6px 12px;border-radius:4px 4px 0 0}
+  .col .liste{border:1px solid var(--rose-clair);border-top:none;border-radius:0 0 4px 4px;background:#fff}
+
+  .ligne{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--rose-clair)}
+  .ligne:last-child{border-bottom:none}
+  .ligne .lib{flex:1;font-size:16px}
+  .ligne .jetons{display:flex;gap:6px}
+  .jeton{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--rose);background:#fff;
+         color:var(--rose);font-size:14px;font-weight:700;line-height:1}
+  .jeton:hover{background:var(--rose-clair)}
+  .jeton.actif{background:var(--prune);border-color:var(--prune);color:#fff}
+  .ligne.bonne{background:#E7F4EE}
+  .ligne.bonne .lib{color:var(--vert);font-weight:700}
+  .ligne.bonne::after{content:"Bonne réponse";font-size:11px;text-transform:uppercase;
+                      letter-spacing:1px;color:var(--vert);font-weight:700}
+  .jeton.juste{background:var(--vert);border-color:var(--vert);color:#fff}
+  .jeton.faux{background:var(--rouge);border-color:var(--rouge);color:#fff}
+  .grand .ligne{padding:16px 18px}
+  .grand .lib{font-size:19px;font-weight:600;color:var(--prune-fonce)}
+
+  /* ---------- Correction ---------- */
+  .correction{margin-top:22px;background:#fff;border:1px solid var(--rose-clair);
+              border-left:6px solid var(--vert);border-radius:6px;padding:20px 24px}
+  .correction.masquee{display:none}
+  .correction h3{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--vert);margin-bottom:8px}
+  .correction .reponse{font-size:20px;font-weight:700;color:var(--prune-fonce);margin-bottom:8px}
+  .correction .just{font-size:16px}
+  .verdicts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+  .verdict{border:1px solid var(--rose-clair);border-radius:5px;padding:10px 12px;font-size:14px}
+  .verdict .n{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gris-moyen);
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .verdict .r{font-weight:700;margin-top:2px}
+  .verdict.ok{border-color:var(--vert);background:#E7F4EE}
+  .verdict.ok .r{color:var(--vert)}
+  .verdict.ko{border-color:var(--rouge);background:#FBEDEC}
+  .verdict.ko .r{color:var(--rouge)}
+
+  /* ---------- Fin ---------- */
+  .podium{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}
+  .place{background:#fff;border:1px solid var(--rose-clair);border-radius:6px;padding:20px;text-align:center}
+  .place.premier{border:2px solid var(--prune);background:var(--rose-clair)}
+  .place .rang{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--prune)}
+  .place .nom{font-size:19px;font-weight:700;color:var(--prune-fonce);margin:6px 0}
+  .place .pts{font-size:32px;font-weight:700;color:var(--prune)}
+
+  footer{text-align:center;font-size:11px;color:var(--gris-moyen);margin-top:36px}
+  @media (max-width:900px){
+    .colonnes,.equipes,.verdicts,.podium{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <div class="marque">TMK Performances · Introduction générale au droit</div>
+        <h1>Épreuve 1 — Quelle juridiction pour quel litige ?</h1>
+      </div>
+      <div class="compteur" id="compteur">Préparation</div>
+    </div>
+    <div class="scores" id="scores"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ACCUEIL -->
+  <section id="accueil" class="panneau">
+    <h2>Nommez les quatre équipes</h2>
+    <p class="intro">Les noms s'affichent ensuite sur chaque jeton. Vous pouvez laisser les noms par défaut.</p>
+    <div class="equipes">
+      <div><label>Équipe 1</label><input id="eq0" value="Équipe 1" maxlength="18"></div>
+      <div><label>Équipe 2</label><input id="eq1" value="Équipe 2" maxlength="18"></div>
+      <div><label>Équipe 3</label><input id="eq2" value="Équipe 3" maxlength="18"></div>
+      <div><label>Équipe 4</label><input id="eq3" value="Équipe 4" maxlength="18"></div>
+    </div>
+    <div class="regle">
+      <b>Comment ça marche.</b> Pour chaque cas, les équipes se concertent quinze secondes puis lèvent leur carton.
+      Vous relevez d'abord l'ordre choisi — judiciaire ou administratif — en cliquant sur le jeton de chaque équipe.
+      Les juridictions n'apparaissent qu'ensuite, ce qui oblige le groupe à trancher l'ordre avant de nommer le tribunal.
+      Vous relevez la juridiction, puis vous validez : les bonnes réponses et la justification s'affichent.<br><br>
+      <b>Barème.</b> Un point par juridiction exacte, soit 10 points au maximum, à reporter sur le tableau de championnat.
+      Le choix de l'ordre n'est pas noté : il sert à structurer le raisonnement.
+    </div>
+    <div class="barre"><button class="btn" onclick="demarrer()">Démarrer l'épreuve</button></div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="jeu" style="display:none">
+    <div class="enonce">
+      <div class="num" id="qnum">1</div>
+      <div class="txt" id="qtxt"></div>
+    </div>
+
+    <div class="etape grand" id="etape1">
+      <h3>Étape 1 — Quel ordre de juridiction ?</h3>
+      <div class="col">
+        <div class="liste" id="listeOrdres"></div>
+      </div>
+      <div class="barre">
+        <button class="btn" id="btnEtape2" onclick="passerEtape2()" disabled>Afficher les juridictions</button>
+        <span class="aide" id="aide1">Cliquez le jeton de chaque équipe sur la ligne qu'elle a choisie.</span>
+      </div>
+    </div>
+
+    <div class="etape masquee" id="etape2">
+      <h3>Étape 2 — Quelle juridiction précisément ?</h3>
+      <div class="colonnes">
+        <div class="col">
+          <h4>Ordre judiciaire</h4>
+          <div class="liste" id="listeJ"></div>
+        </div>
+        <div class="col">
+          <h4>Ordre administratif</h4>
+          <div class="liste" id="listeA"></div>
+          <h4 style="margin-top:14px">Entre les deux ordres</h4>
+          <div class="liste" id="listeX"></div>
+        </div>
+      </div>
+      <div class="barre">
+        <button class="btn" id="btnValider" onclick="valider()" disabled>Valider et afficher la correction</button>
+        <span class="aide" id="aide2">Les quatre équipes doivent être positionnées.</span>
+      </div>
+    </div>
+
+    <div class="correction masquee" id="correction">
+      <h3>Correction commentée</h3>
+      <div class="reponse" id="corRep"></div>
+      <div class="just" id="corJust"></div>
+      <div class="verdicts" id="corVerdicts"></div>
+      <div class="barre"><button class="btn" id="btnSuivant" onclick="suivant()">Question suivante</button></div>
+    </div>
+  </section>
+
+  <!-- FIN -->
+  <section id="fin" class="panneau" style="display:none">
+    <h2>Épreuve terminée</h2>
+    <p class="intro">Reportez ces scores sur le tableau de championnat, colonne « 1 · Quelle juridiction ? ».</p>
+    <div class="podium" id="podium"></div>
+    <div class="barre">
+      <button class="btn secondaire" onclick="rejouer()">Relancer l'épreuve</button>
+    </div>
+  </section>
+
+  <footer>TMK Performances - N° Siret : 49841924100027 - Code NAF : 8559A</footer>
+</div>
+
+<script>
+/* ------------------ Données ------------------ */
+const ORDRES = [
+  {cle:"J", lib:"Ordre judiciaire"},
+  {cle:"A", lib:"Ordre administratif"}
+];
+
+const JURIDICTIONS = {
+  J:[
+    {cle:"tj",  lib:"Tribunal judiciaire (TJ)"},
+    {cle:"tc",  lib:"Tribunal de commerce (TC)"},
+    {cle:"cph", lib:"Conseil de prud'hommes (CPH)"},
+    {cle:"cor", lib:"Tribunal correctionnel"},
+    {cle:"ca",  lib:"Cour d'appel (CA)"},
+    {cle:"cas", lib:"Cour de cassation"}
+  ],
+  A:[
+    {cle:"ta",  lib:"Tribunal administratif (TA)"},
+    {cle:"caa", lib:"Cour administrative d'appel (CAA)"},
+    {cle:"ce",  lib:"Conseil d'État"}
+  ],
+  X:[
+    {cle:"tdc", lib:"Tribunal des conflits"}
+  ]
+};
+
+const QUESTIONS = [
+  {e:"Litige entre deux commerçants sur une facture impayée", o:"J", j:"tc",
+   r:"Tribunal de commerce",
+   just:"Litige entre commerçants relatif à un acte de commerce : la compétence appartient au tribunal de commerce."},
+  {e:"Licenciement contesté par un salarié", o:"J", j:"cph",
+   r:"Conseil de prud'hommes",
+   just:"Tout litige individuel né du contrat de travail relève du conseil de prud'hommes."},
+  {e:"Vol à l'étalage dans un supermarché", o:"J", j:"cor",
+   r:"Tribunal correctionnel",
+   just:"Le vol est un délit : il est jugé par le tribunal correctionnel, formation pénale du tribunal judiciaire."},
+  {e:"Litige entre un locataire et son bailleur particulier", o:"J", j:"tj",
+   r:"Tribunal judiciaire — juge des contentieux de la protection",
+   just:"Les litiges entre bailleur et locataire d'un local d'habitation relèvent du juge des contentieux de la protection, au sein du tribunal judiciaire."},
+  {e:"Recours d'un administré contre une décision de la mairie", o:"A", j:"ta",
+   r:"Tribunal administratif",
+   just:"Le recours contre la décision d'une autorité administrative relève de l'ordre administratif : c'est le tribunal administratif qui est compétent en premier ressort."},
+  {e:"Procédure collective d'une SAS", o:"J", j:"tc",
+   r:"Tribunal de commerce",
+   just:"L'ouverture d'une procédure collective visant une société commerciale relève du tribunal de commerce."},
+  {e:"Litige sur une succession entre héritiers", o:"J", j:"tj",
+   r:"Tribunal judiciaire",
+   just:"Les litiges successoraux entre héritiers relèvent du tribunal judiciaire, en matière civile."},
+  {e:"Cassation d'un arrêt de cour d'appel", o:"J", j:"cas",
+   r:"Cour de cassation",
+   just:"Le pourvoi contre un arrêt de cour d'appel de l'ordre judiciaire est porté devant la Cour de cassation."},
+  {e:"Conflit de compétence entre tribunal judiciaire et tribunal administratif", o:null, j:"tdc",
+   r:"Tribunal des conflits",
+   just:"Le conflit de compétence entre les deux ordres est tranché par le Tribunal des conflits, juridiction paritaire qui n'appartient ni à l'ordre judiciaire ni à l'ordre administratif. Les deux réponses de l'étape 1 sont donc acceptées."},
+  {e:"Recours pour excès de pouvoir contre un décret", o:"A", j:"ce",
+   r:"Conseil d'État",
+   just:"Le recours pour excès de pouvoir dirigé contre un décret est porté directement devant le Conseil d'État, juge de premier et dernier ressort pour les actes réglementaires nationaux."}
+];
+
+/* ------------------ État ------------------ */
+let equipes = [], scores = [0,0,0,0], q = 0;
+let choixOrdre = [null,null,null,null], choixJur = [null,null,null,null], fige = false;
+
+/* ------------------ Rendu ------------------ */
+function initiale(i){ return "É" + (i+1); }
+
+function majScores(){
+  document.getElementById('scores').innerHTML = equipes.map((n,i)=>
+    `<div class="score"><div class="nom">${echap(n)}</div><div class="pts">${scores[i]} <span style="font-size:13px;font-weight:400">pt${scores[i]>1?'s':''}</span></div></div>`
+  ).join('');
+}
+
+function echap(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function ligne(cle, lib, etape){
+  const jetons = equipes.map((n,i)=>
+    `<button class="jeton" data-etape="${etape}" data-cle="${cle}" data-eq="${i}"
+       title="${echap(n)}" onclick="choisir('${etape}','${cle}',${i})">${initiale(i)}</button>`
+  ).join('');
+  return `<div class="ligne" data-etape="${etape}" data-cle="${cle}">
+            <span class="lib">${lib}</span><span class="jetons">${jetons}</span></div>`;
+}
+
+function afficherQuestion(){
+  const Q = QUESTIONS[q];
+  choixOrdre = [null,null,null,null];
+  choixJur = [null,null,null,null];
+  fige = false;
+
+  document.getElementById('compteur').textContent = `Cas ${q+1} sur ${QUESTIONS.length}`;
+  document.getElementById('qnum').textContent = q+1;
+  document.getElementById('qtxt').textContent = Q.e;
+
+  document.getElementById('listeOrdres').innerHTML = ORDRES.map(o=>ligne(o.cle,o.lib,'1')).join('');
+  document.getElementById('listeJ').innerHTML = JURIDICTIONS.J.map(j=>ligne(j.cle,j.lib,'2')).join('');
+  document.getElementById('listeA').innerHTML = JURIDICTIONS.A.map(j=>ligne(j.cle,j.lib,'2')).join('');
+  document.getElementById('listeX').innerHTML = JURIDICTIONS.X.map(j=>ligne(j.cle,j.lib,'2')).join('');
+
+  document.getElementById('etape1').classList.remove('masquee');
+  document.getElementById('etape2').classList.add('masquee');
+  document.getElementById('correction').classList.add('masquee');
+  document.getElementById('btnEtape2').disabled = true;
+  document.getElementById('btnValider').disabled = true;
+  document.getElementById('aide1').textContent = "Cliquez le jeton de chaque équipe sur la ligne qu'elle a choisie.";
+  document.getElementById('aide2').textContent = "Les quatre équipes doivent être positionnées.";
+  document.getElementById('btnSuivant').textContent =
+    (q === QUESTIONS.length-1) ? "Terminer l'épreuve" : "Question suivante";
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ------------------ Interaction ------------------ */
+function choisir(etape, cle, eq){
+  if (fige) return;
+  const tab = (etape === '1') ? choixOrdre : choixJur;
+  tab[eq] = (tab[eq] === cle) ? null : cle;
+  rafraichirJetons(etape);
+}
+
+function rafraichirJetons(etape){
+  const tab = (etape === '1') ? choixOrdre : choixJur;
+  document.querySelectorAll(`.jeton[data-etape="${etape}"]`).forEach(b=>{
+    const eq = +b.dataset.eq;
+    b.classList.toggle('actif', tab[eq] === b.dataset.cle);
+  });
+  const complet = tab.every(v => v !== null);
+  if (etape === '1'){
+    document.getElementById('btnEtape2').disabled = !complet;
+    document.getElementById('aide1').textContent = complet
+      ? "Les quatre équipes sont positionnées."
+      : `${tab.filter(v=>v!==null).length} équipe(s) sur 4 positionnée(s).`;
+  } else {
+    document.getElementById('btnValider').disabled = !complet;
+    document.getElementById('aide2').textContent = complet
+      ? "Les quatre équipes sont positionnées."
+      : `${tab.filter(v=>v!==null).length} équipe(s) sur 4 positionnée(s).`;
+  }
+}
+
+function passerEtape2(){
+  document.getElementById('etape2').classList.remove('masquee');
+  document.getElementById('btnEtape2').disabled = true;
+  document.querySelectorAll('.jeton[data-etape="1"]').forEach(b=>b.disabled = true);
+  document.getElementById('etape2').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function valider(){
+  const Q = QUESTIONS[q];
+  fige = true;
+
+  document.querySelectorAll('.jeton').forEach(b=>b.disabled = true);
+  document.getElementById('btnValider').disabled = true;
+
+  // bonnes lignes
+  document.querySelectorAll(`.ligne[data-etape="2"]`).forEach(l=>{
+    if (l.dataset.cle === Q.j) l.classList.add('bonne');
+  });
+  if (Q.o){
+    document.querySelectorAll(`.ligne[data-etape="1"]`).forEach(l=>{
+      if (l.dataset.cle === Q.o) l.classList.add('bonne');
+    });
+  }
+
+  // jetons juste / faux
+  document.querySelectorAll('.jeton[data-etape="2"]').forEach(b=>{
+    const eq = +b.dataset.eq;
+    if (choixJur[eq] !== b.dataset.cle) return;
+    b.classList.add(b.dataset.cle === Q.j ? 'juste' : 'faux');
+  });
+  document.querySelectorAll('.jeton[data-etape="1"]').forEach(b=>{
+    const eq = +b.dataset.eq;
+    if (choixOrdre[eq] !== b.dataset.cle) return;
+    if (!Q.o) { b.classList.add('juste'); return; }
+    b.classList.add(b.dataset.cle === Q.o ? 'juste' : 'faux');
+  });
+
+  // score
+  equipes.forEach((n,i)=>{ if (choixJur[i] === Q.j) scores[i]++; });
+  majScores();
+
+  // correction
+  document.getElementById('corRep').textContent = "Réponse attendue : " + Q.r;
+  document.getElementById('corJust').textContent = Q.just;
+  document.getElementById('corVerdicts').innerHTML = equipes.map((n,i)=>{
+    const ok = choixJur[i] === Q.j;
+    const lib = libelle(choixJur[i]);
+    return `<div class="verdict ${ok?'ok':'ko'}"><div class="n">${echap(n)}</div>
+              <div class="r">${ok ? '+1 point' : 'Pas de point'}</div>
+              <div style="font-size:13px;color:var(--gris-moyen);margin-top:3px">${lib}</div></div>`;
+  }).join('');
+  document.getElementById('correction').classList.remove('masquee');
+  document.getElementById('correction').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function libelle(cle){
+  for (const groupe of Object.values(JURIDICTIONS)){
+    const t = groupe.find(x=>x.cle===cle);
+    if (t) return t.lib;
+  }
+  return "—";
+}
+
+function suivant(){
+  if (q === QUESTIONS.length-1){ terminer(); return; }
+  q++; afficherQuestion();
+}
+
+function terminer(){
+  document.getElementById('jeu').style.display = 'none';
+  document.getElementById('fin').style.display = 'block';
+  document.getElementById('compteur').textContent = "Épreuve terminée";
+  const classement = equipes.map((n,i)=>({n,p:scores[i]})).sort((a,b)=>b.p-a.p);
+  document.getElementById('podium').innerHTML = classement.map((e,r)=>
+    `<div class="place ${r===0?'premier':''}">
+       <div class="rang">${r+1}${r===0?'re':'e'} place</div>
+       <div class="nom">${echap(e.n)}</div>
+       <div class="pts">${e.p}<span style="font-size:16px;color:var(--gris-moyen)"> / 10</span></div>
+     </div>`).join('');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function demarrer(){
+  equipes = [0,1,2,3].map(i=>{
+    const v = document.getElementById('eq'+i).value.trim();
+    return v || ('Équipe ' + (i+1));
+  });
+  scores = [0,0,0,0]; q = 0;
+  majScores();
+  document.getElementById('accueil').style.display = 'none';
+  document.getElementById('jeu').style.display = 'block';
+  afficherQuestion();
+}
+
+function rejouer(){
+  document.getElementById('fin').style.display = 'none';
+  document.getElementById('accueil').style.display = 'block';
+  document.getElementById('compteur').textContent = "Préparation";
+  scores = [0,0,0,0]; q = 0;
+  document.getElementById('scores').innerHTML = '';
+}
+</script>
+</body>
+</html>
